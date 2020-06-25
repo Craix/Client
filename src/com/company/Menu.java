@@ -8,17 +8,20 @@ import java.awt.event.WindowEvent;
 
 public class Menu implements ActionListener
 {
+    private JFrame frame = new JFrame();
     private JLabel startGame = new JLabel();
     private final String[] object0 = {"Player", "Computer"};
     private JComboBox select0 = new JComboBox(object0);
     private final String[] object1 = {"Ship", "TTT", "RSP"};
     private JComboBox select1 = new JComboBox(object1);
     private JButton newGame = new JButton();
-    private JFrame frame = new JFrame();
-    private ShipeGame shipGame = new ShipeGame();
     private JFrame gameWindow = new JFrame();
+    private ShipeGame shipGame = new ShipeGame();
     private TTTGame ttt = new TTTGame();
+    private RSPGame rsp = new RSPGame();
     private String selectedGame = "";
+    private String login = "Craix";
+    private Network network = new Network();
 
     public Menu()
     {
@@ -105,6 +108,14 @@ public class Menu implements ActionListener
                 case  2:
                 {
                     //jeszcze nie zroibione
+                    onStart();
+                    selectedGame = "RSP";
+                    rsp.start(first);
+                    System.out.println("Start RSP game");
+                    gameWindow.getContentPane().removeAll();
+                    gameWindow.setVisible(true);
+                    gameWindow.getContentPane().add(rsp);
+                    gameWindow.pack();
                     break;
                 }
             }
@@ -117,6 +128,7 @@ public class Menu implements ActionListener
         System.out.println("Zaczynamay nowa gry");
 
     }
+
     private void onEnd()
     {
         //funkcja wołana na koniec każdej gry
@@ -128,19 +140,42 @@ public class Menu implements ActionListener
             case "Ship":
             {
                 System.out.println("Ship game result: " + shipGame.gameResult());
+                try
+                {
+                    network.gameResult(login, selectedGame, shipGame.gameResult());
+                }
+                catch (Exception e)
+                {
+                    System.err.println(e.getMessage());
+                }
                 break;
             }
             case "ttt":
             {
                 System.out.println("Ship game result: " + ttt.gameResult());
+                try
+                {
+                    network.gameResult(login, selectedGame, ttt.gameResult());
+                }
+                catch (Exception e)
+                {
+                    System.err.println(e.getMessage());
+                }
                 break;
             }
-
             case "RSP":
             {
+                System.out.println("rps game result: " + rsp.gameResult());
+                try
+                {
+                    network.gameResult(login, selectedGame, rsp.gameResult());
+                }
+                catch (Exception e)
+                {
+                    System.err.println(e.getMessage());
+                }
                 break;
             }
         }
-
     }
 }

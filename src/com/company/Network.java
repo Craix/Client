@@ -20,7 +20,7 @@ import java.lang.reflect.Type;
 
 public class Network {
 
-    public boolean sendMissle(int x, int y) throws Exception {
+    public static boolean sendMissle(int x, int y) throws Exception {
 
         try {
             final CloseableHttpClient client = HttpClients.createDefault();
@@ -66,7 +66,7 @@ public class Network {
         }
     }
 
-    public void generateMap() throws Exception {
+    public static void generateMap() throws Exception {
 
         try
         {
@@ -82,7 +82,7 @@ public class Network {
         }
     }
 
-    public Single2Int getMissle() throws Exception {
+    public static Single2Int getMissle() throws Exception {
 
         try {
             final HttpClient client = HttpClientBuilder.create().build();
@@ -110,7 +110,7 @@ public class Network {
         }
     }
 
-    public void sendMap(Array2Int array2Int) throws Exception {
+    public static void sendMap(Array2Int array2Int) throws Exception {
 
         try {
             final CloseableHttpClient client = HttpClients.createDefault();
@@ -268,6 +268,40 @@ public class Network {
         } catch (Exception e)
         {
             throw new Exception(e.getMessage());
+        }
+    }
+
+    public static void gameResult(String gameName, String login, int value) throws Exception {
+        final CloseableHttpClient client = HttpClients.createDefault();
+        final HttpPut httpPut = new HttpPut("http://127.0.0.1:8080/api/status");
+
+        Gson gson = new Gson();
+
+        // Tworzymy obiekt uzytkownika
+        final StringsAndInt userData = new StringsAndInt(gameName, login, value);
+
+        // Serializacja obiektu do JSONa
+        final String json = gson.toJson(userData);
+
+        try {
+            final StringEntity entity = new StringEntity(json);
+            httpPut.setEntity(entity);
+            httpPut.setHeader("Accept", "application/json");
+            httpPut.setHeader("Content-type", "application/json");
+
+            final CloseableHttpResponse response = client.execute(httpPut);
+
+            System.out.println("Game result - kot odpowiedzi serwera: " + response.getStatusLine().getStatusCode());
+
+            if (response.getStatusLine().getStatusCode() == 200) {
+                System.out.println("Dodano resul do servera");
+            }
+
+            client.close();
+        } catch (Exception e) {
+
+            throw new Exception(e.getMessage());
+
         }
     }
 }

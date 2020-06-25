@@ -2,7 +2,7 @@ package com.company.DTO;
 
 public class SingleBoolean {
 
-    boolean value;
+    private boolean value;
 
     public boolean isValue() {
         return value;
