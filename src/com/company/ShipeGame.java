@@ -2,7 +2,6 @@ package com.company;
 
 import com.company.DTO.Array2Int;
 import com.company.DTO.Single2Int;
-import javafx.geometry.Point3D;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -22,13 +21,16 @@ public class ShipeGame extends JPanel implements ActionListener, MouseListener {
         end,
     }
 
+
+
+
     private BufferedImage radar, sea, bg, ship, shipR, red, green, yellow, fire, blue;
     private JLabel explain = new JLabel();
     private JButton ready = new JButton();
     private JButton clear = new JButton();
     private int count = 0;
     private int Array[][] = new int[10][10];
-    private Point3D[] shipPosition = new Point3D[6];
+    private int shipPoint[][] = new int[6][3];
     private GameStatus status = GameStatus.start;
     private int hitPoint[][] = new int[10][10];
     private Point selectedPoint = new Point();
@@ -52,7 +54,7 @@ public class ShipeGame extends JPanel implements ActionListener, MouseListener {
         if(status == GameStatus.start)
             drawSelectShip(g2);
 
-        if(status == GameStatus.loop)
+        if(status == GameStatus.loop || status == GameStatus.end)
             drawBoard(g2);
 
     }
@@ -63,16 +65,16 @@ public class ShipeGame extends JPanel implements ActionListener, MouseListener {
 
         for(int i = 0; i <count; i++)
         {
-            if((int)shipPosition[i].getZ() == -1)
+            if(shipPoint[i][2] == -1)
             {
-                int x = (216 + (int)shipPosition[i].getX() * 41) - 41 + 17;
-                int y = (66 + (int)shipPosition[i].getY() * 41)+ 6;
+                int x = (216 + shipPoint[i][0] * 41) - 41 + 17;
+                int y = (66 + shipPoint[i][1] * 41)+ 6;
                 g2.drawImage(shipR, x, y, 90, 28, null);
             }
-            else if((int)shipPosition[i].getZ() == 1)
+            else if(shipPoint[i][2]== 1)
             {
-                int x = 216 + (int)shipPosition[i].getX() * 41 + 6;
-                int y = 66 + (int)shipPosition[i].getY() * 41 - 41 + 16;
+                int x = 216 + shipPoint[i][0] * 41 + 6;
+                int y = 66 + shipPoint[i][1] * 41 - 41 + 16;
                 g2.drawImage(ship, x, y, 28, 90, null);
             }
         }
@@ -86,16 +88,16 @@ public class ShipeGame extends JPanel implements ActionListener, MouseListener {
         //draw shipe
         for(int i = 0; i < count; i++)
         {
-            if((int)shipPosition[i].getZ() == -1)
+            if(shipPoint[i][2]== -1)
             {
-                int x = (25+32) + (int)shipPosition[i].getX() * 32 - 32 + 3;
-                int y = (75+32) + (int)shipPosition[i].getY() * 32 + 2;
+                int x = (25+32) + shipPoint[i][0] * 32 - 32 + 3;
+                int y = (75+32) + shipPoint[i][1] * 32 + 2;
                 g2.drawImage(shipR, x, y, 90, 28, null);
             }
-            else if((int)shipPosition[i].getZ() == 1)
+            else if(shipPoint[i][2] == 1)
             {
-                int x = (25+32) + (int)shipPosition[i].getX() * 32 + 2;
-                int y = (75+32) + (int)shipPosition[i].getY() * 32  - 32+ 3;
+                int x = (25+32) + shipPoint[i][0] * 32 + 2;
+                int y = (75+32) + shipPoint[i][1] * 32  - 32+ 3;
                 g2.drawImage(ship, x, y, 28, 90, null);
             }
         }
@@ -216,6 +218,15 @@ public class ShipeGame extends JPanel implements ActionListener, MouseListener {
             }
         }
 
+        for(int i = 0; i < 6; i++)
+        {
+            for(int j = 0; j< 3; j++)
+            {
+                shipPoint[i][j] = -1;
+            }
+        }
+
+
         playerFirst = start;
     }
 
@@ -317,7 +328,9 @@ public class ShipeGame extends JPanel implements ActionListener, MouseListener {
                                 Array[x - 1 + i][y] = 1;
                             }
 
-                            shipPosition[count] = new Point3D(x, y, -1);
+                            shipPoint[count][0] = x;
+                            shipPoint[count][1] = y;
+                            shipPoint[count][2] = -1;
                             count++;
                             System.out.println("Update array, actual ship: " +  count);
                         }
@@ -331,9 +344,9 @@ public class ShipeGame extends JPanel implements ActionListener, MouseListener {
                             for (int i = 0; i < 3; i++) {
                                 Array[x][y - 1 + i] = 1;
                             }
-                            shipPosition[count] = new Point3D(x, y, 1);
-                            System.out.println(shipPosition[0].getX());
-
+                            shipPoint[count][0] = x;
+                            shipPoint[count][1] = y;
+                            shipPoint[count][2] = 1;
                             count++;
                             System.out.println("Update array, actual ship: " +  count);
                         }
@@ -413,7 +426,10 @@ public class ShipeGame extends JPanel implements ActionListener, MouseListener {
 
         for(int i = 0; i < 6; i++)
         {
-            shipPosition[i] = new Point3D(-1, -1, 0);
+            for(int j = 0; j< 3; j++)
+            {
+                shipPoint[i][j] = -1;
+            }
         }
 
         this.repaint();
